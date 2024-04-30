@@ -3,21 +3,6 @@ import mongoose from 'mongoose';
 
 const url = "http://localhost:8000";
 
-let gfs, gridFsBucket;
-const conn = mongoose.connection;
-
-conn.once('open', async () => {
-    try {
-        gridFsBucket = new mongoose.mongo.GridFSBucket(conn.db, {
-            bucketName: "fs"
-        });
-        gfs = grid(conn.db, mongoose.mongo);
-        gfs.collection('fs');
-        console.log("Connected to MongoDB");
-    } catch (error) {
-        console.error("Error connecting to MongoDB:", error);
-    }
-});
 
 export const uploadFile = async (request, response) => {
     try {
@@ -33,6 +18,21 @@ export const uploadFile = async (request, response) => {
     }
 }
 
+let gfs, gridFsBucket;
+const conn = mongoose.connection;
+
+conn.once('open', async () => {
+    try {
+        gridFsBucket = new mongoose.mongo.GridFSBucket(conn.db, {
+            bucketName: "fs"
+        });
+        gfs = grid(conn.db, mongoose.mongo);
+        gfs.collection('fs');
+        console.log("Connected to MongoDB");
+    } catch (error) {
+        console.error("Error connecting to MongoDB:", error);
+    }
+});
 export const getImage = async (request, response) => {
     try {
         const file = await gfs.files.findOne({ filename: request.params.filename });
