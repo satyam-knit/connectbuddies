@@ -3,7 +3,7 @@ import { Server } from 'socket.io';
 
 const io = new Server(9000, {
     cors: {
-        origin: 'https://connectbuddies-frontend.onrender.com',
+        origin: 'https://connectbuddies.vercel.app',
     }
 })
 
