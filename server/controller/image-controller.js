@@ -1,7 +1,7 @@
 import grid from 'gridfs-stream';
 import mongoose from 'mongoose';
 
-const url = "http://localhost:8000";
+const url = "https://connectbuddies-1.onrender.com";
 
 
 export const uploadFile = async (request, response) => {
