@@ -11,7 +11,7 @@ const connection = async () => {
     const URL = `mongodb://${USERNAME}:${PASSWORD}@ac-we1i04r-shard-00-00.rfvdqlu.mongodb.net:27017,ac-we1i04r-shard-00-01.rfvdqlu.mongodb.net:27017,ac-we1i04r-shard-00-02.rfvdqlu.mongodb.net:27017/?ssl=true&replicaSet=atlas-82kvm4-shard-0&authSource=admin&retryWrites=true&w=majority&appName=connect-buddies`
     try {
 
-        await mongoose.connect(URL)
+        await mongoose.connect(URL, { useUnifiedTopology: true })
 
         console.log("Database connected successfully");
 

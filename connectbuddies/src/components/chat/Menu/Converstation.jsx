@@ -1,54 +1,61 @@
-import { useEffect, useState,useContext } from "react";
-import { getUsers} from "../../../Service/api";
-import { Box , styled, Divider} from "@mui/material";
+import { useState, useEffect, useContext } from 'react';
+
+import { Box, styled, Divider } from '@mui/material';
+
+import { AccountContext } from '../../../context/AccountProvider';
+
+//components
 import Conv from "./Convo";
-import { AccountContext } from "../../../context/AccountProvider";
+import { getUsers } from '../../../Service/api';
 
 const Component = styled(Box)`
-height : 81vh;
-overflow: overlay `;
+    overflow: overlay;
+    height: 81vh;
+`;
 
 const StyledDivider = styled(Divider)`
-margin: 0 0 0 70px;
-background-color: #ede9ef;
-opacity: 0.6;
-`
+    margin: 0 0 0 70px;
+    background-color: #e9edef;
+    opacity: .6;
+`;
 
-const Conversation = ({text}) => {
-
+const Conversations = ({ text }) => {
     const [users, setUsers] = useState([]);
-
-
-    const {account} = useContext(AccountContext);
+    
+    const { account, socket, setActiveUsers } = useContext(AccountContext);
 
     useEffect(() => {
         const fetchData = async () => {
-
-          let response = await getUsers();
-          const filteredData = response.filter(user => user.name.toLowerCase().includes(text.toLowerCase()));
-          setUsers(filteredData);
-
-
+            let data = await getUsers();
+            let fiteredData = data.filter(user => user.name.toLowerCase().includes(text.toLowerCase()));
+            setUsers(fiteredData);
         }
         fetchData();
-      },[text]);
-           
-      
-    return (<>
-    <Component>
-        {
-            users.map(user => (
-                user.sub !== account.sub && 
-                <>
-                <Conv user = {user}/>
-                <StyledDivider/>
-                </>
-            ))
-        }
-       </Component>
-    </>
-       
+    }, [text]);
+
+    useEffect(() => {
+        socket.current.emit('addUser', account);
+        socket.current.on("getUsers", users => {
+            setActiveUsers(users);
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [account])
+
+    return (
+        <Component>
+            {
+                users && users.map((user, index) => (
+                    user.sub !== account.sub && 
+                        <>
+                            <Conv user={user} />
+                            {
+                                users.length !== (index + 1)  && <StyledDivider />
+                            }
+                        </>
+                ))
+            }
+        </Component>
     )
 }
 
-export default Conversation;
+export default Conversations;
